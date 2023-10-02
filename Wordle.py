@@ -15,7 +15,9 @@ GREEN = "#66BB66"
 YELLOW = "#CCBB66"
 GRAY = "#999999"
 WHITE = "#FFFFFF"
-
+greens = []
+yellows = []
+grays = []
 def get_user_word(gw: WordleGWindow, ro: int):
     # Functon that puts the typed in word in a variable called user_word and also strips of empty spaces for the case that the player types in less than 5 letters
     user_word = ""
@@ -32,14 +34,22 @@ def set_green(gw: WordleGWindow, ro: int, col: int, user_word: str):
     gw.set_key_color(user_word[col], GREEN) 
 
 def set_yellow(gw: WordleGWindow, ro: int, col: int, user_word: str):
-    # Function that sets a square and key color to yellow
+    # Function that sets a square color to yellow
     gw.set_square_color(ro,col, YELLOW)
-    gw.set_key_color(user_word[col], YELLOW)
+    
 
 def set_gray(gw: WordleGWindow, ro: int, col: int, user_word: str):
-    # Function that sets a square and key color to gray
+    # Function that sets a square color to gray
     gw.set_square_color(ro,col, GRAY)
-    gw.set_key_color(user_word[col], GRAY)
+    
+def set_keys(gw: WordleGWindow):
+    # Function that sets key colors from least important to most important
+    for i in grays:
+        gw.set_key_color(i, GRAY)
+    for i in yellows:
+        gw.set_key_color(i, YELLOW)
+    for i in greens:
+        gw.set_key_color(i, GREEN)
 
 def reset(gw:WordleGWindow, ro: int, col: int):
     # Function that resets a line; used when the word the player types in isn't 5 letters or isn't a real word
@@ -97,36 +107,42 @@ def wordle():
                 for col in range(5):
                     if user_word[col] == word_check[col]:
                         set_green(gw, ro, col, user_word)
+                        greens.append(user_word[col])
                         word_check = word_check.replace(user_word[col], "*", 1)
 
                 for col in range(5):
                     if user_word[col] in word_check and user_word[col] != word_check[col] and gw.get_square_color(ro,col) not in [GREEN]:
                         set_yellow(gw, ro, col, user_word)
+                        yellows.append(user_word[col])
                         word_check = word_check.replace(user_word[col], "*", 1)
 
                     elif user_word[col] not in word_check and gw.get_square_color(ro,col) not in [YELLOW, GREEN]:
                         set_gray(gw, ro, col, user_word)
+                        grays.append(user_word[col])
                 gw.set_current_row(ro+1)
-
+                set_keys(gw)
             # Valid word but user has run out of guesses and loses Case
             elif user_word in ENGLISH_WORDS and ro == 5 and user_word != optimal_word:
                 for col in range(5):
                     if user_word[col] == word_check[col]:
                         set_green(gw,ro,col,user_word)
+                        greens.append(user_word[col])
                         word_check = word_check.replace(user_word[col], "*", 1)
                         gw.set_current_row(ro+1)
 
                 for col in range(5):
                     if user_word[col] in word_check and user_word[col] != word_check[col] and gw.get_square_color(ro,col) not in [GREEN]:
                         set_yellow(gw, ro, col, user_word)
+                        yellows.append(user_word[col])
                         word_check = word_check.replace(user_word[col], "*", 1)
                         gw.set_current_row(ro+1)
 
                     elif user_word[col] not in word_check and gw.get_square_color(ro,col) not in [YELLOW, GREEN]:
                         set_gray(gw, ro, col, user_word)
+                        grays.append(user_word[col])
                 gw.show_message("You Lose :(, The Mystery Word was " + optimal_word)
                 gw.set_current_row(N_ROWS)
-
+                set_keys(gw)
             # User types in a non english word Case
             else:
                 gw.show_message("Please type in a valid word")
