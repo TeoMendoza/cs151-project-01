@@ -1,7 +1,7 @@
 ########################################
 # Name: Teo Mendoza
 # Collaborators (if any): Help from professor and section leaders
-# Estimated time spent (hr): 7-8 hours
+# Estimated time spent (hr): 8 hours
 # Description of any added extensions: ?
 ########################################
 
